@@ -55,6 +55,7 @@
                         <td class="p-4 border-b">{{ cliente.telefono }}</td>
                         <td class="p-4 border-b">
                             <button
+                                onclick="resendWhatsApp(this, '{{ cliente.nombre }}', '{{ cliente.telefono }}')"
                                 class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">Re-enviar
                                 WA</button>
                         </td>
@@ -92,6 +93,40 @@
             </form>
         </div>
     </div>
+    <script>
+        async function resendWhatsApp(button, fullName, phoneNumber) {
+            button.disabled = true;
+            button.textContent = 'Enviando...';
+            
+            try {
+                const response = await fetch('/resend-whatsapp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        full_name: fullName,
+                        phone_number: phoneNumber
+                    }),
+                });
+    
+                if (response.ok) {
+                    alert('Mensaje enviado con éxito!');
+                    button.textContent = 'Enviado ✔';
+                } else {
+                    const error = await response.json();
+                    alert(`Error al enviar: ${error.detail || 'Error desconocido'}`);
+                    button.textContent = 'Re-enviar WA';
+                    button.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un error de red. Intenta de nuevo.');
+                button.textContent = 'Re-enviar WA';
+                button.disabled = false;
+            }
+        }
+    </script>
 </body>
 
 </html>

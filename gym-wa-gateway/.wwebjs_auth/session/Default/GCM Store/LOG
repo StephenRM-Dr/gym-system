@@ -1,3 +1,2 @@
-2026/03/12-10:42:06.174 2510 Reusing MANIFEST C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\GCM Store/MANIFEST-000001
-2026/03/12-10:42:06.174 2510 Recovering log #3
-2026/03/12-10:42:06.175 2510 Reusing old log C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\GCM Store/000003.log 
+2026/03/12-17:32:54.475 f04 Creating DB C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\GCM Store since it was missing.
+2026/03/12-17:32:54.556 f04 Reusing MANIFEST C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\GCM Store/MANIFEST-000001

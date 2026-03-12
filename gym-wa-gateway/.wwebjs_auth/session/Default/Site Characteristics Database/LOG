@@ -1,3 +1,2 @@
-2026/03/12-10:41:55.748 2184 Reusing MANIFEST C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\Site Characteristics Database/MANIFEST-000001
-2026/03/12-10:41:55.748 2184 Recovering log #3
-2026/03/12-10:41:55.748 2184 Reusing old log C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\Site Characteristics Database/000003.log 
+2026/03/12-17:29:49.250 1060 Creating DB C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\Site Characteristics Database since it was missing.
+2026/03/12-17:29:49.447 1060 Reusing MANIFEST C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\Site Characteristics Database/MANIFEST-000001

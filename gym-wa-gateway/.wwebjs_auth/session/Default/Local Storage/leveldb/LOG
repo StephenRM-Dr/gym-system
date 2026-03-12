@@ -1,3 +1,2 @@
-2026/03/12-10:41:55.802 2994 Reusing MANIFEST C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
-2026/03/12-10:41:55.815 2994 Recovering log #3
-2026/03/12-10:41:55.817 2994 Reusing old log C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\Local Storage\leveldb/000003.log 
+2026/03/12-17:29:49.675 1a58 Creating DB C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\Local Storage\leveldb since it was missing.
+2026/03/12-17:29:49.850 1a58 Reusing MANIFEST C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+import requests
 from database import get_connection
 from datetime import datetime, timedelta
 from fastapi.templating import Jinja2Templates
@@ -12,6 +13,8 @@ from fastapi.responses import RedirectResponse
 templates = Jinja2Templates(directory="templates")
 
 app = FastAPI(title="Gym System API")
+NODE_API_URL = "http://localhost:3000/send-message"
+
 
 # --- Modelos de Datos (Pydantic) ---
 class PaymentRequest(BaseModel):
@@ -29,35 +32,31 @@ def read_root():
 def get_dashboard_view(request: Request):
     conn = get_connection()
     cur = conn.cursor()
-    
-    # 1. Métricas
-    cur.execute("SELECT COUNT(*) FROM members WHERE status = true")
-    total_activos = cur.fetchone()[0]
-    
-    cur.execute("SELECT full_name, phone_number FROM members WHERE expiration_date = CURRENT_DATE AND status = true")
-    vencen_hoy = cur.fetchall()
-    
-    cur.execute("SELECT full_name, expiration_date FROM members WHERE expiration_date BETWEEN CURRENT_DATE + 1 AND CURRENT_DATE + 7 AND status = true")
-    proximos = cur.fetchall()
-
-    # 2. Planes para el modal
-    cur.execute("SELECT id, name FROM plans")
-    lista_planes = [{"id": row[0], "nombre": row[1]} for row in cur.fetchall()]
-
-    cur.close()
-    conn.close()
-
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request,
-        "resumen": {
-            "total_socios_activos": total_activos,
-            "vencimientos_hoy_count": len(vencen_hoy)
-        },
-        "detalles_hoy": [{"nombre": row[0], "telefono": row[1]} for row in vencen_hoy],
-        "proximos_7_dias": proximos,
-        "planes": lista_planes
-    })
+    try:
+        # 1. Métricas
+        cur.execute("SELECT COUNT(*) FROM members WHERE status = true")
+        total_activos = cur.fetchone()[0]
         
+        cur.execute("SELECT full_name, phone_number FROM members WHERE expiration_date = CURRENT_DATE AND status = true")
+        vencen_hoy = cur.fetchall()
+        
+        cur.execute("SELECT full_name, expiration_date FROM members WHERE expiration_date BETWEEN CURRENT_DATE + 1 AND CURRENT_DATE + 7 AND status = true")
+        proximos = cur.fetchall()
+
+        # 2. Planes para el modal
+        cur.execute("SELECT id, name FROM plans")
+        lista_planes = [{"id": row[0], "nombre": row[1]} for row in cur.fetchall()]
+
+        return templates.TemplateResponse("dashboard.html", {
+            "request": request,
+            "resumen": {
+                "total_socios_activos": total_activos,
+                "vencimientos_hoy_count": len(vencen_hoy)
+            },
+            "detalles_hoy": [{"nombre": row[0], "telefono": row[1]} for row in vencen_hoy],
+            "proximos_7_dias": proximos,
+            "planes": lista_planes
+        })
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -101,9 +100,7 @@ async def register_payment_web(dni: str = Form(...), plan_id: int = Form(...)):
         new_expiration = base_date + timedelta(days=days_to_add)
 
         # 4. Actualización
-        # ... (después de calcular la nueva fecha y antes del commit) ...
-
-# 1. Actualizamos al socio y obtenemos su ID interno
+        # 1. Actualizamos al socio y obtenemos su ID interno
         cur.execute("""
             UPDATE members 
             SET expiration_date = %s, plan_id = %s, status = true 
@@ -119,11 +116,6 @@ async def register_payment_web(dni: str = Form(...), plan_id: int = Form(...)):
                 VALUES (%s, %s, (SELECT price FROM plans WHERE id = %s), %s, %s)
             """, (member_id, plan_id, plan_id, current_expiration, new_expiration))
 
-        member_id = cur.fetchone()[0]
-
-
-        
-        
         conn.commit()
         return RedirectResponse(url="/dashboard", status_code=303)
 
@@ -133,3 +125,27 @@ async def register_payment_web(dni: str = Form(...), plan_id: int = Form(...)):
     finally:
         cur.close()
         conn.close()
+
+@app.post("/resend-whatsapp")
+async def resend_whatsapp(request: Request):
+    data = await request.json()
+    phone_number = data.get("phone_number")
+    full_name = data.get("full_name")
+    
+    if not phone_number or not full_name:
+        raise HTTPException(status_code=400, detail="Phone number and name are required.")
+
+    message = (f"⚠️ ¡Hola {full_name}! Tu plan vence HOY. "
+               "No pierdas el ritmo de entrenamiento, te esperamos en caja para renovar.")
+    
+    payload = {"number": phone_number, "message": message}
+    
+    try:
+        response = requests.post(NODE_API_URL, json=payload, timeout=10)
+        
+        if response.status_code == 200:
+            return {"status": "Message sent successfully"}
+        else:
+            raise HTTPException(status_code=response.status_code, detail=f"Error from gateway: {response.text}")
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Error connecting to gateway: {str(e)}")

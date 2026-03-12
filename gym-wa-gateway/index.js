@@ -9,8 +9,8 @@ app.use(express.json()); // Para que el servidor entienda JSON
 const client = new Client({
     authStrategy: new LocalAuth(), // Esto guarda la sesión para no escanear el QR siempre
     puppeteer: {
-        headless: true, // Cambia a false si quieres ver el navegador abriéndose
-        args: ['--no-sandbox']
+        headless: false, // Cambia a false si quieres ver el navegador abriéndose
+        args: []
     }
 });
 
