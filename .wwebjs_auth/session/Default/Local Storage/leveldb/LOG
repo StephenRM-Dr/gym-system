@@ -1,0 +1,6 @@
+2026/03/12-15:40:14.311 223c Reusing MANIFEST C:\Users\Sistemas\gym-system\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
+2026/03/12-15:40:14.330 223c Recovering log #3
+2026/03/12-15:40:14.332 223c Reusing old log C:\Users\Sistemas\gym-system\.wwebjs_auth\session\Default\Local Storage\leveldb/000003.log 
+2026/03/12-15:41:14.344 223c Level-0 table #5: started
+2026/03/12-15:41:14.353 223c Level-0 table #5: 17147 bytes OK
+2026/03/12-15:41:14.359 223c Delete type=0 #3

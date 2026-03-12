@@ -1,50 +1,55 @@
-import psycopg2
 import requests
-from datetime import datetime, timedelta
+from database import get_connection
+from datetime import datetime
 
-# 1. Configuración de conexiones
-DB_PARAMS = {
-    "host": "localhost",
-    "database": "gym_system",
-    "user": "postgres",
-    "password": "1234"
-}
+# URL del Gateway de Node.js que ya tienes corriendo
 NODE_API_URL = "http://localhost:3000/send-message"
 
-def check_and_send_alerts():
+def run_audit_and_notify():
     conn = get_connection()
-    if conn:
-        cur = conn.cursor()
+    if not conn:
+        return
 
-        # 2. Query de Auditoría: Buscar miembros que vencen en 3 días
-        # Filtramos por status activo y que la fecha de vencimiento sea pronto
+    try:
+        cur = conn.cursor()
+        
+        # Buscamos miembros que vencen en exactamente 3 días
         query = """
             SELECT full_name, phone_number, expiration_date 
             FROM members 
             WHERE expiration_date = CURRENT_DATE + INTERVAL '3 days'
-            AND status = uuid_true_si_es_boolean; -- Ajusta según tu tipo de dato
+            AND status = true;
         """
         cur.execute(query)
-        vencimientos = cur.fetchall()
+        results = cur.fetchall()
 
-        for socio in vencimientos:
-            nombre, telefono, fecha = socio
-            mensaje = f"Hola {nombre}, te saludamos del Gym. Te recordamos que tu plan vence el {fecha}. ¡No te quedes sin entrenar!"
+        if not results:
+            print("🔍 No hay vencimientos próximos para hoy.")
+            return
+
+        for row in results:
+            nombre, telefono, fecha_venc = row
             
-            # 3. Disparar al Gateway de Node.js
+            # Personalizamos el mensaje
+            mensaje = (f"¡Hola {nombre}! 💪 Te saludamos de tu Gimnasio. "
+                       f"Te recordamos que tu plan vence el {fecha_venc}. "
+                       "¡No pierdas el ritmo, te esperamos para renovar!")
+
+            # Enviamos al Gateway
             payload = {"number": telefono, "message": mensaje}
             response = requests.post(NODE_API_URL, json=payload)
-            
-            if response.status_code == 200:
-                print(f"✅ Alerta enviada a {nombre}")
-            else:
-                print(f"❌ Error enviando a {nombre}: {response.text}")
 
+            if response.status_code == 200:
+                print(f"✅ Mensaje enviado exitosamente a {nombre}")
+            else:
+                print(f"❌ Error al enviar a {nombre}: {response.text}")
+
+    except Exception as e:
+        print(f"⚠️ Error durante la auditoría: {e}")
+    finally:
         cur.close()
         conn.close()
 
-    except Exception as e:
-        print(f"Error en el sistema: {e}")
-
 if __name__ == "__main__":
-    check_and_send_alerts()
+    print("🚀 Iniciando auditoría de membresías...")
+    run_audit_and_notify()

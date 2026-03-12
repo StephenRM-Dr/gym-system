@@ -1,0 +1,13 @@
+# Python
+backend/venv/
+backend/__pycache__/
+backend/.env
+
+# Node.js
+whatsapp-gateway/node_modules/
+whatsapp-gateway/.wwebjs_auth/
+whatsapp-gateway/.wwebjs_cache/
+
+# Sistema
+.DS_Store
+Thumbs.db
