@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} | Lifting Club | Rincón Digital</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'lifting-blue': '#163152', // Azul profundo del logo
+                        'lifting-green': '#22c55e', // Verde para WhatsApp/Activos
+                        'lifting-red': '#ef4444',   // Rojo para Vencidos
+                    },
+                    fontFamily: {
+                        'sans': ['Roboto', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+    <nav class="bg-lifting-blue p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="text-white text-3xl font-bold tracking-tight">Lifting Club</span>
+                <span class="text-white text-3xl font-light opacity-80">| Lista de Miembros</span>
+            </div>
+
+            <a href="/dashboard"
+                class="bg-white text-lifting-blue font-semibold px-6 py-2 rounded-lg shadow-md hover:bg-gray-100 transition duration-300">
+                ← Volver al Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-10">
+
+        <div class="mb-8 border-b-2 border-gray-200 pb-4">
+            <h1 class="text-4xl font-bold text-gray-900">{{ title }}</h1>
+            <p class="text-gray-600 mt-2">Visualizando página {{ current_page }} de {{ total_pages }}</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100">
+            <table class="w-full text-left">
+                <thead class="bg-lifting-blue text-white">
+                    <tr class="text-sm uppercase tracking-wider">
+                        <th class="py-5 px-6">Nombre</th>
+                        <th class="py-5 px-6">DNI</th>
+                        <th class="py-5 px-6">Teléfono</th>
+                        <th class="py-5 px-6">Vencimiento</th>
+                        <th class="py-5 px-6 text-right">Acción</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for m in members %}
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="py-5 px-6 text-lg font-medium text-gray-800">{{ m[0] }}</td>
+
+                        <td class="py-5 px-6 text-gray-600 font-mono">{{ m[1] }}</td>
+
+                        <td class="py-5 px-6 text-gray-600 font-mono">{{ m[2] }}</td>
+
+                        <td class="py-5 px-6">
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold 
+                                {% if filter == 'vencen_hoy' %} bg-red-100 text-lifting-red 
+                                {% elif filter == 'proximos' %} bg-blue-100 text-blue-700 
+                                {% else %} bg-green-100 text-lifting-green {% endif %}">
+                                {{ m[3] }}
+                            </span>
+                        </td>
+
+                        <td class="py-5 px-6 text-right">
+                            <a href="https://wa.me/{{ m[2] }}" target="_blank"
+                                class="inline-flex items-center gap-2 bg-lifting-green text-white font-semibold px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300 text-sm shadow">
+                                WhatsApp 📱
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="py-12 text-center text-gray-500 text-lg">No se encontraron miembros en
+                            esta categoría.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="bg-gray-50 px-6 py-5 border-t border-gray-100 flex justify-between items-center">
+                <span class="text-sm text-gray-700">Página {{ current_page }} de {{ total_pages }}</span>
+
+                <div class="flex gap-2">
+                    {% if current_page > 1 %}
+                    <a href="/members/list?filter={{ filter }}&page={{ current_page - 1 }}"
+                        class="bg-white text-lifting-blue font-semibold px-5 py-2 rounded-lg shadow border border-gray-200 hover:bg-gray-100 transition duration-300">
+                        Anterior
+                    </a>
+                    {% endif %}
+
+                    {% if current_page < total_pages %} <a
+                        href="/members/list?filter={{ filter }}&page={{ current_page + 1 }}"
+                        class="bg-white text-lifting-blue font-semibold px-5 py-2 rounded-lg shadow border border-gray-200 hover:bg-gray-100 transition duration-300">
+                        Siguiente
+                        </a>
+                        {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

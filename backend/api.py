@@ -43,6 +43,9 @@ def get_dashboard_view(request: Request):
         cur.execute("SELECT full_name, expiration_date FROM members WHERE expiration_date BETWEEN CURRENT_DATE + 1 AND CURRENT_DATE + 7 AND status = true")
         proximos = cur.fetchall()
 
+        cur.execute("SELECT COUNT(*) FROM members WHERE expiration_date BETWEEN CURRENT_DATE + 1 AND CURRENT_DATE + 7 AND status = true")
+        proximos_count = cur.fetchone()[0]  
+
         # 2. Planes para el modal
         cur.execute("SELECT id, name FROM plans")
         lista_planes = [{"id": row[0], "nombre": row[1]} for row in cur.fetchall()]
@@ -51,7 +54,8 @@ def get_dashboard_view(request: Request):
             "request": request,
             "resumen": {
                 "total_socios_activos": total_activos,
-                "vencimientos_hoy_count": len(vencen_hoy)
+                "vencimientos_hoy_count": len(vencen_hoy),
+                "proximos_7_dias_count": proximos_count
             },
             "detalles_hoy": [{"nombre": row[0], "telefono": row[1]} for row in vencen_hoy],
             "proximos_7_dias": proximos,
@@ -149,3 +153,46 @@ async def resend_whatsapp(request: Request):
             raise HTTPException(status_code=response.status_code, detail=f"Error from gateway: {response.text}")
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=500, detail=f"Error connecting to gateway: {str(e)}")
+
+@app.get("/members/list", response_class=HTMLResponse)
+def get_members_list(request: Request, filter: str = "all", page: int = 1):
+    conn = get_connection()
+    cur = conn.cursor()
+    
+    limit = 10  # Socios por página
+    offset = (page - 1) * limit
+    
+    # Lógica de filtrado dinámico
+    if filter == "activos":
+        where_clause = "WHERE status = true"
+        title = "Socios Activos"
+    elif filter == "vencen_hoy":
+        where_clause = "WHERE expiration_date = CURRENT_DATE AND status = true"
+        title = "Vencimientos de Hoy"
+    elif filter == "proximos":
+        where_clause = "WHERE expiration_date BETWEEN CURRENT_DATE + 1 AND CURRENT_DATE + 7 AND status = true"
+        title = "Próximos Vencimientos (7 días)"
+    else:
+        where_clause = ""
+        title = "Lista General de Socios"
+
+    # Consulta con paginación
+    cur.execute(f"SELECT full_name, dni, phone_number, expiration_date FROM members {where_clause} LIMIT %s OFFSET %s", (limit, offset))
+    members = cur.fetchall()
+    
+    # Contar total para paginación
+    cur.execute(f"SELECT COUNT(*) FROM members {where_clause}")
+    total_count = cur.fetchone()[0]
+    total_pages = (total_count + limit - 1) // limit
+
+    cur.close()
+    conn.close()
+
+    return templates.TemplateResponse("members_list.html", {
+        "request": request,
+        "members": members,
+        "title": title,
+        "filter": filter,
+        "current_page": page,
+        "total_pages": total_pages
+    })    
