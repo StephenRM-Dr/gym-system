@@ -1,126 +1,184 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} | Lifting Club | Rincón Digital</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }} | Lifting Club</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'lifting-blue': '#163152', // Azul profundo del logo
-                        'lifting-green': '#22c55e', // Verde para WhatsApp/Activos
-                        'lifting-red': '#ef4444',   // Rojo para Vencidos
-                    },
-                    fontFamily: {
-                        'sans': ['Roboto', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AdminLTE style -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
 </head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
 
-<body class="bg-gray-100 font-sans">
-
-    <nav class="bg-lifting-blue p-4 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <span class="text-white text-3xl font-bold tracking-tight">Lifting Club</span>
-                <span class="text-white text-3xl font-light opacity-80">| Lista de Miembros</span>
-            </div>
-
-            <a href="/dashboard"
-                class="bg-white text-lifting-blue font-semibold px-6 py-2 rounded-lg shadow-md hover:bg-gray-100 transition duration-300">
-                ← Volver al Dashboard
-            </a>
-        </div>
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            </li>
+        </ul>
     </nav>
+    <!-- /.navbar -->
 
-    <div class="container mx-auto p-10">
-
-        <div class="mb-8 border-b-2 border-gray-200 pb-4">
-            <h1 class="text-4xl font-bold text-gray-900">{{ title }}</h1>
-            <p class="text-gray-600 mt-2">Visualizando página {{ current_page }} de {{ total_pages }}</p>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100">
-            <table class="w-full text-left">
-                <thead class="bg-lifting-blue text-white">
-                    <tr class="text-sm uppercase tracking-wider">
-                        <th class="py-5 px-6">Nombre</th>
-                        <th class="py-5 px-6">DNI</th>
-                        <th class="py-5 px-6">Teléfono</th>
-                        <th class="py-5 px-6">Vencimiento</th>
-                        <th class="py-5 px-6 text-right">Acción</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    {% for m in members %}
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="py-5 px-6 text-lg font-medium text-gray-800">{{ m[0] }}</td>
-
-                        <td class="py-5 px-6 text-gray-600 font-mono">{{ m[1] }}</td>
-
-                        <td class="py-5 px-6 text-gray-600 font-mono">{{ m[2] }}</td>
-
-                        <td class="py-5 px-6">
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold 
-                                {% if filter == 'vencen_hoy' %} bg-red-100 text-lifting-red 
-                                {% elif filter == 'proximos' %} bg-blue-100 text-blue-700 
-                                {% else %} bg-green-100 text-lifting-green {% endif %}">
-                                {{ m[3] }}
-                            </span>
-                        </td>
-
-                        <td class="py-5 px-6 text-right">
-                            <a href="https://wa.me/{{ m[2] }}" target="_blank"
-                                class="inline-flex items-center gap-2 bg-lifting-green text-white font-semibold px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300 text-sm shadow">
-                                WhatsApp 📱
-                            </a>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="5" class="py-12 text-center text-gray-500 text-lg">No se encontraron miembros en
-                            esta categoría.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-            <div class="bg-gray-50 px-6 py-5 border-t border-gray-100 flex justify-between items-center">
-                <span class="text-sm text-gray-700">Página {{ current_page }} de {{ total_pages }}</span>
-
-                <div class="flex gap-2">
-                    {% if current_page > 1 %}
-                    <a href="/members/list?filter={{ filter }}&page={{ current_page - 1 }}"
-                        class="bg-white text-lifting-blue font-semibold px-5 py-2 rounded-lg shadow border border-gray-200 hover:bg-gray-100 transition duration-300">
-                        Anterior
-                    </a>
-                    {% endif %}
-
-                    {% if current_page < total_pages %} <a
-                        href="/members/list?filter={{ filter }}&page={{ current_page + 1 }}"
-                        class="bg-white text-lifting-blue font-semibold px-5 py-2 rounded-lg shadow border border-gray-200 hover:bg-gray-100 transition duration-300">
-                        Siguiente
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <a href="/dashboard" class="brand-link">
+            <span class="brand-text font-weight-light">Lifting Club</span>
+        </a>
+        <div class="sidebar">
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <li class="nav-item">
+                        <a href="/dashboard" class="nav-link">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>Dashboard</p>
                         </a>
-                        {% endif %}
+                    </li>
+                    <li class="nav-item">
+                        <a href="/members/list" class="nav-link active">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>Lista de Socios</p>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>{{ title }}</h1>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>DNI</th>
+                                    <th>Teléfono</th>
+                                    <th>Vencimiento</th>
+                                    <th style="width: 220px" class="text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for m in members %}
+                                <tr>
+                                    <td>{{ m[0] }}</td>
+                                    <td>{{ m[1] }}</td>
+                                    <td>{{ m[2] }}</td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if filter == 'vencen_hoy' %} badge-danger
+                                            {% elif filter == 'proximos' %} badge-warning
+                                            {% else %} badge-success {% endif %}">
+                                            {{ m[3].strftime('%Y-%m-%d') }}
+                                        </span>
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-primary btn-sm" onclick="openChangePlanModal('{{ m[1] }}')">
+                                            <i class="fas fa-sync-alt"></i> Cambiar Plan
+                                        </button>
+                                        <a href="https://wa.me/{{ m[2] }}" target="_blank" class="btn btn-success btn-sm">
+                                            <i class="fab fa-whatsapp"></i> WhatsApp
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No se encontraron miembros.</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer clearfix">
+                        <ul class="pagination pagination-sm m-0 float-right">
+                            {% if current_page > 1 %}
+                            <li class="page-item"><a class="page-link" href="/members/list?filter={{ filter }}&page={{ current_page - 1 }}">&laquo; Anterior</a></li>
+                            {% endif %}
+                            <li class="page-item disabled"><a class="page-link" href="#">Página {{ current_page }} de {{ total_pages }}</a></li>
+                            {% if current_page < total_pages %}
+                            <li class="page-item"><a class="page-link" href="/members/list?filter={{ filter }}&page={{ current_page + 1 }}">Siguiente &raquo;</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Modal para Cambiar Plan -->
+    <div class="modal fade" id="changePlanModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Renovar / Cambiar Plan</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/register-payment-web" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>DNI del Socio</label>
+                            <input type="text" name="dni" id="modalDni" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Seleccione el Nuevo Plan</label>
+                            <select name="plan_id" class="form-control" required>
+                                {% for plan in planes %}
+                                <option value="{{ plan.id }}">{{ plan.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Actualizar Plan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
-</body>
 
+    <footer class="main-footer">
+        <strong>Copyright &copy; 2024 <a href="https://rincon-digital.com">Rincon Digital</a>.</strong> All rights reserved.
+    </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+
+<script>
+    function openChangePlanModal(dni) {
+        $('#modalDni').val(dni);
+        $('#changePlanModal').modal('show');
+    }
+</script>
+</body>
 </html>

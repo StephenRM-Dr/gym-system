@@ -1,6 +1,6 @@
-2026/03/13-16:44:35.939 255c Reusing MANIFEST C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
-2026/03/13-16:44:35.951 255c Recovering log #3
-2026/03/13-16:44:35.956 255c Reusing old log C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\Local Storage\leveldb/000003.log 
-2026/03/13-17:31:38.711 255c Level-0 table #5: started
-2026/03/13-17:31:38.749 255c Level-0 table #5: 17371 bytes OK
-2026/03/13-17:31:38.785 255c Delete type=0 #3
+2026/03/14-10:38:16.567 2b84 Reusing MANIFEST C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
+2026/03/14-10:38:16.593 2b84 Recovering log #4
+2026/03/14-10:38:16.595 2b84 Reusing old log C:\Users\Sistemas\gym-system\gym-wa-gateway\.wwebjs_auth\session\Default\Local Storage\leveldb/000004.log 
+2026/03/14-12:08:32.389 d18 Level-0 table #8: started
+2026/03/14-12:08:32.400 d18 Level-0 table #8: 14065 bytes OK
+2026/03/14-12:08:32.408 d18 Delete type=0 #4
